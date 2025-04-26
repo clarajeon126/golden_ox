@@ -9,6 +9,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Only POST requests allowed" });
   }
 
+  console.log("Hi");
+
   const { messages } = req.body;
 
   try {
