@@ -1,0 +1,14 @@
+{
+    "path": {
+      "current": 0,
+      "total": 5,
+      "steps": ["scene safe", "bsi ppe", "patient count", "moi noi", "additional resources", "cspine"],
+      "breakpoints": [2]
+    },
+    "success": 1,
+    "sender": "gpt",
+    "prompt": "You are at a park and see someone collapsed on the ground. What is the very first thing you do?",
+    "response": "",
+    "hint": ""
+  }
+  

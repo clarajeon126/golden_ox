@@ -1,4 +1,4 @@
-/* /app/page.module.css */
+/* /styles/Home.module.css */
 .homeContainer {
     display: flex;
     flex-direction: column;
@@ -17,7 +17,5 @@
     padding: 15px 30px;
     font-size: 1.5rem;
     border-radius: 12px;
-    font-family: 'Patrick Hand', cursive;
-    font-size: 1.5rem;
   }
   

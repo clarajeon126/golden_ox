@@ -1,0 +1,18 @@
+/* /app/simulation/styles/StartButton.module.css */
+
+.startButton {
+    padding: 15px 30px;
+    background-color: #ffd580;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: inherit;
+  }
+  
+  .startButton:hover {
+    background-color: #ffcc66;
+  }
+  

@@ -1,42 +1,50 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* /styles/globals.css */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+  font-family: 'FuturaHandwritten';
+  src: url('/fonts/FuturaHandwritten.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
+  font-family: 'FuturaHandwritten' ;
+
+}
+body {
   margin: 0;
+  padding: 0;
+  font-family: 'FuturaHandwritten' ;
+  background-color: #faf8f0; /* paper-like background */
+  color: #222;
+  min-height: 100vh;
+  background-image: url('/paper-texture.png'); /* optional */
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  background-color: #ffd580;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  /* no font-family needed, inherits from body */
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button:hover {
+  background-color: #ffcc66;
+}
+
+input {
+  border: 2px solid #555;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  /* no font-family needed, inherits from body */
 }

@@ -1,0 +1,184 @@
+// /app/api/init-gpt/route.js
+
+import { OpenAI } from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Define your scenario (your patient care report)
+const scenarioData = {
+  incident_number: "25008386",
+  patient: {
+    name: "John A. Doe",
+    dob: "1944-09-22",
+    gender: "Female",
+    race: "White",
+    weight_kg: 101,
+    home_address: {
+      street: "123 Main St",
+      city: "Baltimore",
+      state: "MD",
+      zip: "Baltimore City"
+    },
+    medical_history: [
+      "Coronary Artery Disease",
+      "Atrial Fibrillation",
+      "Cardiac Stent",
+      "Quadruple Bypass (2017)"
+    ],
+    medications: [
+      "Eliquis (apixaban)",
+      "Albuterol"
+    ],
+    allergies: "No Known Drug Allergy"
+  },
+  chief_complaint: {
+    primary: "Chest pain",
+    secondary: "Shortness of Breath (SOB)",
+    anatomic_location: "Chest",
+    symptom_onset: "Unknown"
+  },
+  vitals: [
+    {
+      time: "2025-04-23T10:38:00",
+      bp: "155/71",
+      hr: 69,
+      rr: 24,
+      spo2: 97,
+      pain: 8,
+      gcs: 15,
+      temperature_c: 36.6,
+      glucose_mg_dl: 113,
+      cardiac_rhythm: "Atrial Fibrillation (A-Fib)"
+    },
+    {
+      time: "2025-04-23T10:49:39",
+      bp: "178/97",
+      hr: 70,
+      rr: 24,
+      spo2: 95,
+      pain: 8,
+      gcs: 15,
+      cardiac_rhythm: "Atrial Fibrillation (A-Fib)"
+    },
+    {
+      time: "2025-04-23T10:54:38",
+      bp: "156/93",
+      hr: 90,
+      rr: 20,
+      spo2: 95,
+      pain: 8,
+      gcs: 15,
+      cardiac_rhythm: "Atrial Fibrillation (A-Fib)"
+    },
+    {
+      time: "2025-04-23T10:58:42",
+      bp: "139/70",
+      hr: 72,
+      rr: 18,
+      spo2: 97,
+      pain: 8,
+      gcs: 15,
+      cardiac_rhythm: "Atrial Fibrillation (A-Fib)"
+    }
+  ],
+  treatments: [
+    "Oxygen via nasal cannula at 3 LPM",
+    "Aspirin 4 x 81mg PO",
+    "IV established and blood drawn",
+    "Nitroglycerin 0.4mg SL (two doses)",
+    "Coached breathing exercises"
+  ],
+  transport: {
+    mode_to_scene: "Lights/Sirens",
+    mode_to_hospital: "Lights/Sirens",
+    hospital: {
+      name: "Carroll Hospital Center (LifeBridge)",
+      address: "200 Memorial Avenue, Westminster, MD 21157"
+    },
+    priority: "Priority 2"
+  },
+  crew: [
+    {
+      name: "Kong, King",
+      role: "Primary Patient Caregiver",
+      level: "Paramedic"
+    },
+    {
+      name: "User, Demo",
+      role: "Other Patient Caregiver (Ride-along)",
+      level: "Student"
+    }
+  ],
+  narrative_summary: "Patient with history of A-Fib and CAD experienced chest pain (8/10) and SOB, worsened over 1 day. Vitals taken, oxygen administered. Aspirin given. IV started. Two doses of nitroglycerin administered, pain reduced to 3/10. Patient transported via stretcher to Carroll Hospital Center with no change in cardiac rhythm on 12-lead ECG. Handed off to hospital staff."
+};
+
+export async function GET() {
+  try {
+    const systemPrompt = `
+You are an EMT simulation designer.
+
+Your job:
+- Based on this patient report, generate a JSON structure to start the simulation.
+- Define a "path" object that includes:
+  - "steps" (steps the EMT student must take)
+  - "total" (number of steps)
+  - "current" (starting at 0)
+  - "breakpoints" (logical points where the student must stop and get more info)
+- The steps should be very detailed and medically accurate. Make sure to follow typical EMT protocols
+- there should be like more than 20 steps
+- the steps should be very comprehensive
+- the prompt and the steps should include specific details from the data provided below that are very specific to this scenario.
+
+- Start the simulation with a detailed, medically realistic scene description and the first prompt to the student.
+
+Important:
+- The first prompt must be at least 2 full sentences.
+- Prompt must describe the setting, basic scene safety, and patient condition without giving away everything.
+- Format the full response ONLY as JSON like:
+
+{
+  "path": {
+    "current": 0,
+    "total": (number of steps),
+    "steps": ["step1", "step2", ..., "stepN"],
+    "breakpoints": [list of indices]
+  },
+  "success": 1,
+  "sender": "gpt",
+  "prompt": "First scene description and question",
+  "response": "",
+  "hint": ""
+}
+
+Strictly output JSON only.
+
+Here is the patient report:
+
+${JSON.stringify(scenarioData, null, 2)}
+`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo",
+      messages: [{ role: "system", content: systemPrompt }],
+      temperature: 0.3,
+    });
+
+    const gptResponse = completion.choices[0]?.message?.content;
+    console.log("[Server] GPT Initial Setup Response:", gptResponse);
+
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(gptResponse);
+    } catch (error) {
+      console.error("[Server] GPT Initial Setup Parsing Error:", error);
+      return Response.json({ success: false, error: "Invalid GPT JSON" }, { status: 500 });
+    }
+
+    return Response.json({ success: true, data: parsedResponse });
+  } catch (error) {
+    console.error("[Server] Initial Setup Server Error:", error);
+    return Response.json({ success: false, error: "Server Error" }, { status: 500 });
+  }
+}

@@ -1,0 +1,15 @@
+/* /styles/Visual.module.css */
+.visualContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .visualImage {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+  

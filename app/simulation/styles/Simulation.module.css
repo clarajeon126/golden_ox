@@ -1,0 +1,25 @@
+/* /styles/Simulation.module.css */
+.simulationContainer {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .leftSide {
+    width: 60%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .rightSide {
+    width: 40%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  

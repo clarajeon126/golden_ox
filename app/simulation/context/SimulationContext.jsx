@@ -1,0 +1,33 @@
+// /app/simulation/context/SimulationContext.js
+
+"use client";
+
+import { createContext, useContext, useState } from "react";
+
+const SimulationContext = createContext();
+
+export function SimulationProvider({ children }) {
+  const [path, setPath] = useState(null);
+  const [currentPrompt, setCurrentPrompt] = useState("");
+  const [hint, setHint] = useState("");
+  const [attempts, setAttempts] = useState(0);
+
+  return (
+    <SimulationContext.Provider value={{
+      path,
+      setPath,
+      currentPrompt,
+      setCurrentPrompt,
+      hint,
+      setHint,
+      attempts,
+      setAttempts,
+    }}>
+      {children}
+    </SimulationContext.Provider>
+  );
+}
+
+export function useSimulation() {
+  return useContext(SimulationContext);
+}
