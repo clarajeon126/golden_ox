@@ -2,8 +2,6 @@
 
 import { OpenAI } from "openai";
 import { createSteps } from "@/app/simulation/helpers/steps"; // ✅ Import your steps generator!
-import scenarioData from "../../../parsed_pcr.json";
-
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
