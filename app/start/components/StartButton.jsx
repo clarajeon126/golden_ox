@@ -12,17 +12,8 @@ export default function StartButton() {
   const { setPath, setCurrentPrompt, setHint, setAttempts } = useSimulation();
 
   const handleStart = async () => {
-    const initData = await initSimulation();
+    router.push("/simulation"); // 🚀 Move to Simulation Page!
 
-    if (initData) {
-      setPath(initData.path);
-      setCurrentPrompt(initData.prompt);
-      setHint(""); 
-      setAttempts(0); 
-      router.push("/simulation"); // 🚀 Move to Simulation Page!
-    } else {
-      alert("Failed to start simulation. Please try again!");
-    }
   };
 
   return (

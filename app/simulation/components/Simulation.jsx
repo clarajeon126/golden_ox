@@ -15,17 +15,16 @@ export default function Simulation() {
   useEffect(() => {
     if (!currentPrompt) {
       // If no prompt loaded, user probably refreshed directly into /simulation → send them back
-      router.push("/start");
     }
   }, [currentPrompt, router]);
 
-  if (!currentPrompt) {
-    return (
-      <div className={styles.simulationPage}>
-        <p>Loading simulation...</p>
-      </div>
-    );
-  }
+  // if (!currentPrompt) {
+  //   return (
+  //     <div className={styles.simulationPage}>
+  //       <p>Loading simulation...</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={styles.simulationContainer}>

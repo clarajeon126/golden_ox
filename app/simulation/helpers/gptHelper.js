@@ -1,30 +1,20 @@
-// /app/simulation/helpers/gptHelper.js
-import { askGPT } from "./askGPT"; // correct relative path!
+export async function askGPT(messages) {
+  try {
+    const res = await fetch("/api/ask-gpt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
+    });
 
-export async function sendResponseToGPT(path, prompt, response) {
-  const json = {
-    path,
-    success: 1,
-    sender: "site",
-    prompt,
-    response,
-    hint: "",
-  };
-
-  const gptResponse = await askGPT(json);
-  return gptResponse;
-}
-
-export async function startSimulation(path) {
-  const json = {
-    path,
-    success: 1,
-    sender: "site",
-    prompt: "",
-    response: "",
-    hint: "",
-  };
-
-  const gptResponse = await askGPT(json);
-  return gptResponse;
+    const data = await res.json();
+    if (data.success) {
+      return data.response;
+    } else {
+      console.error("GPT Error:", data.error);
+      return "Something went wrong.";
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    return "Network error.";
+  }
 }
