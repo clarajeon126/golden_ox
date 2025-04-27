@@ -13,7 +13,7 @@ export default function NavigationArrows() {
   return (
     <div className={styles.navArrows}>
       <button className={styles.arrow} onClick={handleBack}>
-        back
+        back to home
       </button>
     </div>
   );

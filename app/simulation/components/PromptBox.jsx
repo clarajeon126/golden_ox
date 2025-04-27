@@ -193,27 +193,39 @@ export default function PromptBox() {
   
 
   return (
-    <div className={styles.promptBox}>
-      <div className={styles.prompt}>{currentPrompt}</div>
-      <textarea
-  id="input-box"
-  className={styles.input}
-  value={input}
-  onChange={(e) => setInput(e.target.value)}
-  placeholder="Type your response..."
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();  // Prevents a new line
-      handleSubmit();
-    }
-  }}
-/>
-
-      <button className={styles.submitButton} onClick={handleSubmit}>
-        Submit
-      </button>
-      {loading && <LoadingSpinner />}
-      {hint && <Hint />}
+<div className={styles.promptBox} style={{ position: "relative" }}>
+  
+  {/* ✅ Loading overlay, only if loading */}
+  {loading && (
+    <div className={styles.loadingOverlay}>
+      <LoadingSpinner />
     </div>
+  )}
+
+  {/* ✅ Actual form content */}
+  <div className={styles.prompt}>{currentPrompt}</div>
+  
+  <textarea
+    id="input-box"
+    className={styles.input}
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    placeholder="Type your response..."
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    }}
+  />
+
+  <button className={styles.submitButton} onClick={handleSubmit}>
+    Submit
+  </button>
+
+  {/* ✅ Hint shown below */}
+  {hint && <Hint />}
+</div>
+
   );
 }

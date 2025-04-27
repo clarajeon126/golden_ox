@@ -9,6 +9,27 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+async function generateSceneImage(initialPrompt) {
+  const imagePrompt = `
+${initialPrompt}
+in this style Minimalist cute chibi characters with big heads and tiny bodies, flat pastel colors, thin soft outlines, simple dot eyes and no mouths, whimsical accessories like hats and propellers, hand-drawn sketchy UI buttons, arranged in a neat but playful composition, cozy and friendly atmosphere, doodle-like style.
+
+`;
+
+  const response = await openai.images.generate({
+    model: "dall-e-3",
+    prompt: imagePrompt,
+    n: 1,
+    size: "1024x1024",
+  });
+
+  const imageUrl = response.data[0].url;
+  console.log("[Server] Generated image URL:", imageUrl);
+
+  return imageUrl;
+}
+
+
 async function extractTextFromPDF(buffer) {
   const pdfData = await pdfParse(buffer);
   return pdfData.text;
@@ -40,24 +61,17 @@ return JSON.parse(gptResponse);:
   },
   "narrative_summary": comprehensive synopsis of the call
   "initial prompt": initial prompt describing the scene. Make it simple and understandable for a layperson.
-  "isMedical",
-  "isConscious",
-    "noBreathing",
-    "yesCPR",
-    "priority",
-    "medications": a list of any of [oxygen,
-        aspirin,
-        nitroglycerin,
-        epinephrine,
-        albuterol,
-        narcan,
-        oralGlucose,
-        activatedCharcoal,
-        acetaminophen] in this format "[
+  "isMedical": true or false,
+  "isConscious": true or false,
+    "noBreathing": true or false,
+    "yesCPR": true or false,
+    "priority" : 1 or 2 or 3,
+    "medications": an array of medication in this format "[
                 { name: "aspirin", dose: "325 mg", route: "PO", needsMedicalDirection: false },
                 { name: "nitroglycerin", dose: "0.4 mg", route: "SL", needsMedicalDirection: true }
               ]"
-    "traumaType": evisceration, suckingChestWound, "bentKneeFracture", "closedFemurFracture", "openFracture", headInjury, spinalInjury
+    "traumaType": "a value of evisceration, suckingChestWound, "bentKneeFracture", "closedFemurFracture", "openFracture", headInjury, spinalInjury",
+    "visual": ""
 }
 
 Example initial promt: "You are called to a residential home for an 80-year-old woman complaining of chest pain and shortness of breath. The patient is sitting on a couch, appearing pale and visibly distressed. What is the first thing you should do?"
@@ -79,7 +93,6 @@ ${rawText}
 
   return JSON.parse(gptResponse);
 }
-
 export async function POST(request) {
   try {
     const formData = await request.formData();
@@ -95,10 +108,19 @@ export async function POST(request) {
     const rawText = await extractTextFromPDF(buffer);
     const parsedData = await parseTextWithGPT(rawText);
 
-    const publicDir = path.join(process.cwd(), 'public'); // absolute path to /public
-    const savePath = path.join(publicDir, 'parsed_pcr.json'); // /public/parsed_pcr.json
-    await fs.writeFile(savePath, JSON.stringify(parsedData, null, 2)); // Save properly!
+    console.log("before");
+    // 🌟 New: Generate image based on initial prompt
+    // if (parsedData["initial_prompt"]) {
+    //   console.log("here")
+    //   const imageUrl = await generateSceneImage(parsedData["initial prompt"]);
+    //   parsedData.visual = imageUrl; // Save it inside parsedData
+    // } else {
+    //   parsedData.visual = ""; // fallback
+    // }
 
+    const publicDir = path.join(process.cwd(), 'public');
+    const savePath = path.join(publicDir, 'parsed_pcr.json');
+    await fs.writeFile(savePath, JSON.stringify(parsedData, null, 2));
 
     return NextResponse.json({ success: true, data: parsedData }, { status: 200 });
 
@@ -106,4 +128,5 @@ export async function POST(request) {
     console.error("[Server] Upload route error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
+
 }

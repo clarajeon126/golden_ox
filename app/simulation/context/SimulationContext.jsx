@@ -12,7 +12,7 @@ export function SimulationProvider({ children }) {
   const [hint, setHint] = useState("");
   const [attempts, setAttempts] = useState(0);
   const [generatedSteps, setGeneratedSteps] = useState([]);
-
+  const [visual, setVisual] = useState("");
   return (
     <SimulationContext.Provider value={{
       path,
@@ -25,6 +25,8 @@ export function SimulationProvider({ children }) {
       setAttempts,
       generatedSteps,
       setGeneratedSteps,
+      visual,
+      setVisual
     }}>
       {children}
     </SimulationContext.Provider>
