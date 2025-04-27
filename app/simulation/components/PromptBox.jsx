@@ -100,7 +100,6 @@ export default function PromptBox() {
       "success": 1 or 0,
       "sender": "gpt",
       "prompt": "Updated situation and next question",
-      "response": "",
       "hint": "If user is wrong"
     }
 
@@ -153,11 +152,12 @@ export default function PromptBox() {
   const handleSubmit = async () => {
     if (!input.trim()) return;
     setLoading(true);
-  
-    const updatedMessages = [...messages, { role: "user", content: input }];
+    let newInput = input + " Make sure the response is in the given JSON format. Do not add any free text.";
+    const updatedMessages = [...messages, { role: "user", content: newInput }];
     setMessages(updatedMessages);
   
     try {
+      console.log("Sending messages to GPT:", updatedMessages);
     const gptResponseRaw = await askGPT(updatedMessages);
 
     // Check if it's a string and needs parsing
@@ -189,7 +189,7 @@ export default function PromptBox() {
           setInput("");
           setMessages([
             ...updatedMessages,
-            { role: "assistant", content: gptResponse.prompt }
+            { role: "assistant", content: gptResponseRaw }
           ]);
         }
       } else {
