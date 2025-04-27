@@ -47,7 +47,7 @@
   "priority": 2,
   "medications": [
     {
-      "name": "Albuterol Sulfate",
+      "name": "Albuterol Sulfate ",
       "dose": "2.5 MG",
       "route": "Inhalation - Blow-By",
       "needsMedicalDirection": false
@@ -61,4 +61,5 @@
   ],
   "traumaType": "",
   "visual": ""
+
 }
