@@ -39,5 +39,9 @@
     "priority": "Priority 3"
   },
   "narrative_summary": "Arrived on scene to find a 48 y/o male laying supine on his bed with labored breathing. Patient was wheezing bi-laterally and reported this asthma attack was 'the worst one' he's ever had. Vitals are listed above. Patient reported NKDA. Administered 2.5mg of albuterol via nebulizer with no improvement. Patient continued to present at 85% O2 on nebulizer. Patient was then given 0.5mg of Epi IM with marked improvement in reported work of breathing. O2 stat improved to 94% on room air with a decrease in RR to 22. Patient was treated without any further changes or interventions.",
+<<<<<<< HEAD
   "initial_prompt": "You are called to a residential home for a 48-year-old man complaining of severe trouble breathing. The patient is found lying supine on his bed, appearing clammy and wheezing. What is the first thing you should do?"
+=======
+  "initial_prompt": "You are called to a residential home for a 48-year-old man experiencing severe trouble breathing. The patient is found lying supine on his bed, appearing clammy and wheezing. What is the first thing you should do?"
+>>>>>>> 2d01ac9deebff52bd3b325ed03e98c9910bc5a9e
 }
