@@ -33,23 +33,21 @@ import styles from "../styles/PromptBox.module.css";
       ]
       });
 export default function PromptBox() {
-  // const {
-  //   currentPrompt,
-  //   attempts,
-  //   setAttempts,
-  //   hint,
-  //   setHint,
-  //   path,
-  //   setPath,
-  //   setCurrentPrompt
-  // } = useSimulation();
-  const [currentPrompt, setCurrentPrompt] = useState("You are dispatched to a residential home for an 80-year-old woman complaining of chest pain and shortness of breath.\n  The scene appears safe and there are no visible hazards.\n  The patient is sitting on a couch, appearing pale and visibly distressed.\n  What is the first thing you should do?")
+  const {
+    currentPrompt,
+    attempts,
+    setAttempts,
+    hint,
+    setHint,
+    path,
+    setPath,
+    setCurrentPrompt
+  } = useSimulation();
+
+
   const [input, setInput] = useState("");
-  const [hint, setHint] = useState("");
   const [loading, setLoading] = useState(false);
-  const [path, setPath] = useState({
-    outer_id: 0,
-    completed_inner_set: []});
+
   const router = useRouter();
 
 
@@ -145,45 +143,72 @@ export default function PromptBox() {
 
       Do not force steps to be completed in sequence inside a single subarray.
 
-    - Completed_inner_set keeps track of which items have already been completed in the current subarray. We move to the next subarray only when all items of the current subarray specified by outer id have been completed.
+    - Completed_inner_set keeps track of which items have already been completed in the current subarray. We move to the next subarray only when all items of the current subarray specified by outer id have been completed. Store the full step string of steps that have been completed in the completed_inner_set array.
+    - and outer_id is the index of the current subarray in the steps array.
+    outer_id should increment when all items in the current subarray have been completed.
+
         `
     }
-  ]);const handleSubmit = async () => {
+  ]);
+  const handleSubmit = async () => {
     if (!input.trim()) return;
     setLoading(true);
   
     const updatedMessages = [...messages, { role: "user", content: input }];
     setMessages(updatedMessages);
   
-    const gptResponse = await askGPT(updatedMessages);
-    console.log("GPT Response:", gptResponse);
-  
-    setMessages([...updatedMessages, { role: "assistant", content: gptResponse }]);
-  
-    setLoading(false);
-  
-    if (gptResponse.success === 1) {
-      const { outer_id } = gptResponse.path;
-      
-      // 💥 Compare against *your* original generatedSteps
-      if (outer_id >= generatedSteps.length) {
-        router.push("/finished");
-      } else {
-        setPath(gptResponse.path);
-        setCurrentPrompt(gptResponse.prompt);
-        setHint("");
-        setInput("");
+    try {
+    const gptResponseRaw = await askGPT(updatedMessages);
+
+    // Check if it's a string and needs parsing
+    let gptResponse;
+    if (typeof gptResponseRaw === 'string') {
+      try {
+        gptResponse = JSON.parse(gptResponseRaw);
+      } catch (error) {
+        console.error("Error parsing GPT response:", error);
+        gptResponse = null;
       }
     } else {
-      // ❌ Wrong answer
-      const inputBox = document.getElementById("input-box");
-      if (inputBox) {
-        inputBox.classList.add(styles.shake);
-        setTimeout(() => inputBox.classList.remove(styles.shake), 500);
+      gptResponse = gptResponseRaw; // already an object
+    }
+
+    console.log("Parsed GPT Response:", gptResponse);
+    console.log(gptResponse?.success);
+
+    setLoading(false);
+
+      if (gptResponse.success === 1) {
+        const { outer_id } = gptResponse.path;
+        if (outer_id >= generatedSteps.length) {
+          router.push("/finished");
+        } else {
+          setPath(gptResponse.path);
+          setCurrentPrompt(gptResponse.prompt);
+          setHint("");
+          setInput("");
+          setMessages([
+            ...updatedMessages,
+            { role: "assistant", content: gptResponse.prompt }
+          ]);
+        }
+      } else {
+        const inputBox = document.getElementById("input-box");
+        if (inputBox) {
+          inputBox.classList.add(styles.shake);
+          setTimeout(() => inputBox.classList.remove(styles.shake), 500);
+        }
+        if (gptResponse.hint) {
+          setHint(gptResponse.hint);
+        }
+        setMessages([
+          ...updatedMessages,
+          { role: "assistant", content: gptResponse.hint || "Try again!" }
+        ]);
       }
-      if (gptResponse.hint) {
-        setHint(gptResponse.hint);
-      }
+    } catch (error) {
+      console.error("askGPT Error:", error);
+      setLoading(false);
     }
   };
   
