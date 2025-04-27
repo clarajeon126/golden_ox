@@ -92,8 +92,7 @@ ${rawText}
   console.log(gptResponse);
 
   return JSON.parse(gptResponse);
-}
-export async function POST(request) {
+}export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
@@ -108,25 +107,11 @@ export async function POST(request) {
     const rawText = await extractTextFromPDF(buffer);
     const parsedData = await parseTextWithGPT(rawText);
 
-    console.log("before");
-    // 🌟 New: Generate image based on initial prompt
-    // if (parsedData["initial_prompt"]) {
-    //   console.log("here")
-    //   const imageUrl = await generateSceneImage(parsedData["initial prompt"]);
-    //   parsedData.visual = imageUrl; // Save it inside parsedData
-    // } else {
-    //   parsedData.visual = ""; // fallback
-    // }
-
-    const publicDir = path.join(process.cwd(), 'public');
-    const savePath = path.join(publicDir, 'parsed_pcr.json');
-    await fs.writeFile(savePath, JSON.stringify(parsedData, null, 2));
-
+    // ✨ Instead of saving to disk, just return it
     return NextResponse.json({ success: true, data: parsedData }, { status: 200 });
 
   } catch (error) {
     console.error("[Server] Upload route error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-
 }
