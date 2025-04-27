@@ -100,7 +100,7 @@ export default function PromptBox() {
       "success": 1 or 0,
       "sender": "gpt",
       "prompt": "Updated situation and next question",
-      "hint": "If user is wrong"
+      "hint": "If success is 0, provide a hint to the user",
     }
 
     DETERMINING IF A STEP IS COMPLETED:
@@ -131,6 +131,7 @@ export default function PromptBox() {
 
       Then the user must complete B1, B2, and B3 before moving to outer_id = 2.
 
+      Even if the user completed C1, if they have not fully done B1, B2 and B3, they cannot move to C1 and outer id can Not be incremented.
       Within a Subarray (Inner Steps):
       The user may complete steps in any order inside a given subarray.
 
@@ -217,14 +218,20 @@ export default function PromptBox() {
   return (
     <div className={styles.promptBox}>
       <div className={styles.prompt}>{currentPrompt}</div>
-      <input
-        id="input-box"
-        type="text"
-        className={styles.input}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type your response..."
-      />
+      <textarea
+  id="input-box"
+  className={styles.input}
+  value={input}
+  onChange={(e) => setInput(e.target.value)}
+  placeholder="Type your response..."
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();  // Prevents a new line
+      handleSubmit();
+    }
+  }}
+/>
+
       <button className={styles.submitButton} onClick={handleSubmit}>
         Submit
       </button>

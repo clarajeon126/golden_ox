@@ -44,15 +44,19 @@ export default function StartPage() {
   function handleDragLeave() {
     setDragActive(false);
   }
-
   return (
     <main style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
       <img src="/logo.png" alt="Golden Ox" style={{ width: "200px", height: "200px", marginBottom: "2rem" }} />
-      <h1 style={{ fontSize: "3rem"}}>Golden Ox</h1>
-      <p style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>Steadfast Training for Life’s Critical Moments</p>
-
-      <StartButton />
-
+      <h1 style={{ fontSize: "3rem" }}>Golden Ox</h1>
+      <p style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>
+        Steadfast Training for Life’s Critical Moments
+      </p>
+  
+      {/* ✅ Only show StartButton if upload success */}
+      {uploadStatus === "✅ PDF uploaded and parsed successfully!" && (
+        <StartButton />
+      )}
+  
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -74,4 +78,5 @@ export default function StartPage() {
       </div>
     </main>
   );
+  
 }
