@@ -189,22 +189,4 @@ function createSteps({
   
     return steps;
   }
-  
-  const steps = createSteps({
-    isMedical: true,
-    isConscious: true,
-    noBreathing: false,
-    yesCPR: false,
-    priority: 2,
-    medications: [
-      { name: "aspirin", dose: "325 mg", route: "PO", needsMedicalDirection: false },
-      { name: "nitroglycerin", dose: "0.4 mg", route: "SL", needsMedicalDirection: true }
-    ],
-    traumaType: null,
-    patientWeightKg: 101,
-    age: 80,
-    isPregnant: false,
-    cardiacHistory: ["Coronary Artery Disease", "Atrial Fibrillation", "Cardiac Stent", "Quadruple Bypass"]
-  });
-
-    console.log(steps);
+  export { createSteps };

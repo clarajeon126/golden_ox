@@ -30,33 +30,34 @@ export default function PromptBox() {
     setLoading(false);
   
     if (gptResponse.success === 1) {
-      // Correct answer
-      if (gptResponse.path.current === gptResponse.path.total) {
+      const { outer_id, inner_id, steps } = gptResponse.path;
+  
+      if (outer_id >= steps.length) {
+        // Finished simulation
         router.push("/finished");
       } else {
         setPath(gptResponse.path);
         setCurrentPrompt(gptResponse.prompt);
-        setAttempts(0); // Reset attempts
-        setHint("");     // Clear hint
-        setInput("");    // Clear input
+        setAttempts(0);
+        setHint("");
+        setInput("");
       }
     } else {
       // Wrong answer
       setAttempts(prev => prev + 1);
   
-      // Shake the input box
       const inputBox = document.getElementById("input-box");
       if (inputBox) {
         inputBox.classList.add(styles.shake);
         setTimeout(() => inputBox.classList.remove(styles.shake), 500);
       }
   
-      // IMMEDIATELY show the hint if GPT provided one
       if (gptResponse.hint) {
         setHint(gptResponse.hint);
       }
     }
   };
+  
   
 
   return (

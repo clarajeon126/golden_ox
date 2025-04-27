@@ -1,11 +1,13 @@
 // /app/api/init-gpt/route.js
 
 import { OpenAI } from "openai";
+import { createSteps } from "@/app/simulation/helpers/steps"; // ✅ Import your steps generator!
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Your existing patient scenario
 // Define your scenario (your patient care report)
 const scenarioData = {
   incident_number: "25008386",
@@ -116,47 +118,61 @@ const scenarioData = {
 
 export async function GET() {
   try {
+    // First generate your steps from createSteps
+    const generatedSteps = createSteps({
+      isMedical: true,
+      isConscious: true,
+      noBreathing: false,
+      yesCPR: false,
+      priority: 2,
+      medications: [
+        { name: "aspirin", dose: "325 mg", route: "PO", needsMedicalDirection: false },
+        { name: "nitroglycerin", dose: "0.4 mg", route: "SL", needsMedicalDirection: true }
+      ],
+      traumaType: null,
+      patientWeightKg: scenarioData.patient.weight_kg,
+      age: 80,
+      isPregnant: false,
+      cardiacHistory: scenarioData.patient.medical_history
+    });
+
+    // Now create the path
+    const path = {
+      outer_id: 0,
+      inner_id: 0,
+      steps: generatedSteps
+    };
+
     const systemPrompt = `
-You are an EMT simulation designer.
+You are an EMT simulation assistant.
 
 Your job:
-- Based on this patient report, generate a JSON structure to start the simulation.
-- Define a "path" object that includes:
-  - "steps" (steps the EMT student must take)
-  - "total" (number of steps)
-  - "current" (starting at 0)
-  - "breakpoints" (logical points where the student must stop and get more info)
-- The steps should be very detailed and medically accurate. Make sure to follow typical EMT protocols
-- there should be like more than 20 steps
-- the steps should be very comprehensive
-- the prompt and the steps should include specific details from the data provided below that are very specific to this scenario.
+- Write the FIRST SCENE DESCRIPTION and first PROMPT ONLY.
+- The prompt must set the setting: location, patient appearance, basic setting of the scene, etc.
+- But do not include any info that an EMT would not be able to see when they directly arrive on scene.
+- DO NOT create any steps or path. Assume the steps were already generated.
+- Focus on making the scene realistic, medically accurate, and immersive.
+- Use 2-4 sentences.
+- Ask the user what they would like to do first
 
-- Start the simulation with a detailed, medically realistic scene description and the first prompt to the student.
-
-Important:
-- The first prompt must be at least 2 full sentences.
-- Prompt must describe the setting, basic scene safety, and patient condition without giving away everything.
-- Format the full response ONLY as JSON like:
+Strictly output JSON ONLY like:
 
 {
-  "path": {
-    "current": 0,
-    "total": (number of steps),
-    "steps": ["step1", "step2", ..., "stepN"],
-    "breakpoints": [list of indices]
-  },
+  "path": (provided path),
   "success": 1,
   "sender": "gpt",
-  "prompt": "First scene description and question",
+  "prompt": "Scene description and question here",
   "response": "",
   "hint": ""
 }
 
-Strictly output JSON only.
-
 Here is the patient report:
 
 ${JSON.stringify(scenarioData, null, 2)}
+
+Here is the already created path:
+
+${JSON.stringify(path, null, 2)}
 `;
 
     const completion = await openai.chat.completions.create({
