@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-const scenarioData = {
-  // your full scenarioData object exactly as you posted
-};
+const res = await fetch("/parsed_pcr.json", { cache: "no-store" });
+const scenarioData = await res.json();
+
 
 export default function useSimulationMessages() {
   const [messages, setMessages] = useState([
