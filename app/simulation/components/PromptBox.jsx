@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useSimulation } from "../context/SimulationContext";
-import { createSteps } from "../helpers/steps";
 import { askGPT } from "../helpers/gptHelper";
 import { useRouter } from "next/navigation";
 //import scenarioData from "../data/scenarioData";
@@ -13,27 +12,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import styles from "../styles/PromptBox.module.css";
 
     // First generate your steps from createSteps
-    const generatedSteps = createSteps({
-      isMedical: true,
-      isConscious: true,
-      noBreathing: false,
-      yesCPR: false,
-      priority: 2,
-      medications: [
-        { name: "aspirin", dose: "325 mg", route: "PO", needsMedicalDirection: false },
-        { name: "nitroglycerin", dose: "0.4 mg", route: "SL", needsMedicalDirection: true }
-      ],
-      traumaType: null,
-      patientWeightKg: 101,
-      age: 80,
-      isPregnant: false,
-      cardiacHistory: [
-        "Coronary Artery Disease",
-        "Atrial Fibrillation",
-        "Cardiac Stent",
-        "Quadruple Bypass (2017)"
-      ]
-      });
+    
 export default function PromptBox() {
   const {
     currentPrompt,
@@ -43,7 +22,8 @@ export default function PromptBox() {
     setHint,
     path,
     setPath,
-    setCurrentPrompt
+    setCurrentPrompt,
+    generatedSteps,
   } = useSimulation();
 
 
@@ -54,11 +34,6 @@ export default function PromptBox() {
 
 
     // Now create the path
-    const pathStruc = {
-      outer_id: 0,
-      inner_id: 0,
-      steps: generatedSteps
-    };
 
 
   const [messages, setMessages] = useState([
@@ -89,7 +64,7 @@ export default function PromptBox() {
     - If user makes an error or skips a step, politely correct them or ask clarifying questions.
     - Be encouraging but do not give away answers.
     - If user asks an appropriate assessment question, reveal the related scene details. Do not reveal scene details until the user probes.
-    - If the user provides an acronym like MOI, NOI, or SAMPLE/OPQRST, require from the user the full explanation of the acronym. If the user gives the wrong definition, correct the user.
+    - If the user provides an acronym like MOI- Mechanism of Injury, NOI-Nature of Illness, or SAMPLE/OPQRST, require from the user the full explanation of the acronym. If the user gives the wrong definition, correct the user.
     - If the user provides SAMPLE/OPQRST, provide information from the narrative_summary and report data describing the patient's symptoms, past medical history, medications, and describe the pain.
 
     You must ONLY respond using a JSON like:
@@ -107,7 +82,7 @@ export default function PromptBox() {
 
     DETERMINING IF A STEP IS COMPLETED:
       Here are the steps the user needs to take:
-      ${JSON.stringify(pathStruc, null, 2)}
+      ${JSON.stringify(generatedSteps, null, 2)}
     Steps is a nested array.
       Example:
       [

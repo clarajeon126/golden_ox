@@ -11,7 +11,6 @@
 
 * {
   font-family: 'FuturaHandwritten' ;
-
 }
 body {
   margin: 0;
@@ -20,9 +19,6 @@ body {
   background-color: #faf8f0; /* paper-like background */
   color: #222;
   min-height: 100vh;
-  background-image: url('/paper-texture.png'); /* optional */
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 
 button {

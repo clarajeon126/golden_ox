@@ -53,7 +53,10 @@ return JSON.parse(gptResponse);:
         narcan,
         oralGlucose,
         activatedCharcoal,
-        acetaminophen
+        acetaminophen] in this format "[
+                { name: "aspirin", dose: "325 mg", route: "PO", needsMedicalDirection: false },
+                { name: "nitroglycerin", dose: "0.4 mg", route: "SL", needsMedicalDirection: true }
+              ]"
     "traumaType": evisceration, suckingChestWound, "bentKneeFracture", "closedFemurFracture", "openFracture", headInjury, spinalInjury
 }
 

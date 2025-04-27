@@ -9,7 +9,6 @@ function createSteps({
     patientWeightKg,
     age,
     isPregnant = false,
-    cardiacHistory = []
   }) {
     const steps = [];
   
@@ -20,7 +19,7 @@ function createSteps({
       steps.push([
         "User wears appropriate BSI/PPE.",
         "User determines the number of patients.",
-        `User identifies ${isMedical ? "Nature of Illness (NOI)" : "Mechanism of Injury (MOI)"}.`,
+        `User identifies that the call is a ${isMedical ? "Nature of Illness (NOI)" : "Mechanism of Injury (MOI)"}.`,
         "User calls for additional resources if needed.",
         `User ${isMedical ? "does NOT" : "does"} consider spinal precautions (C-spine).`
       ]);

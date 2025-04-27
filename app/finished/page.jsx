@@ -10,7 +10,7 @@ export default function FinishedPage() {
   return (
     <div className={styles.homeContainer}>
       <h1 className={styles.title}>🎉 Congratulations! 🎉</h1>
-      <button className={styles.startButton} onClick={() => router.push("/")}>
+      <button className={styles.startButton} onClick={() => router.push("/start")}>
         Restart
       </button>
     </div>
