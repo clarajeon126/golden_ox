@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    webpack: (config, { isServer }) => {
+      if (isServer) {
+        config.externals.push('pdf-parse'); // <-- Tell Next.js not to bundle pdf-parse
+      }
+      return config;
+    },
+  };
+  
+  export default nextConfig;
+  
