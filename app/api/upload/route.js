@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pdfParse from 'pdf-parse';
 import { OpenAI } from 'openai';
 import fs from 'fs/promises'; // Save file after GPT parsing
+import path from 'path'; // ✅
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -36,8 +38,26 @@ return JSON.parse(gptResponse);:
     "mode_to_hospital": string,
     "priority": string
   },
-  "narrative_summary": string
+  "narrative_summary": comprehensive synopsis of the call
+  "initial prompt": initial prompt describing the scene. Make it simple and understandable for a layperson.
+  "isMedical",
+  "isConscious",
+    "noBreathing",
+    "yesCPR",
+    "priority",
+    "medications": a list of any of [oxygen,
+        aspirin,
+        nitroglycerin,
+        epinephrine,
+        albuterol,
+        narcan,
+        oralGlucose,
+        activatedCharcoal,
+        acetaminophen
+    "traumaType": evisceration, suckingChestWound, "bentKneeFracture", "closedFemurFracture", "openFracture", headInjury, spinalInjury
 }
+
+Example initial promt: "You are called to a residential home for an 80-year-old woman complaining of chest pain and shortness of breath. The patient is sitting on a couch, appearing pale and visibly distressed. What is the first thing you should do?"
 
 Only include fields if information is available. If unknown, leave empty string or empty array.
 
@@ -72,7 +92,10 @@ export async function POST(request) {
     const rawText = await extractTextFromPDF(buffer);
     const parsedData = await parseTextWithGPT(rawText);
 
-    await fs.writeFile('./parsed_pcr.json', JSON.stringify(parsedData, null, 2)); // Save
+    const publicDir = path.join(process.cwd(), 'public'); // absolute path to /public
+    const savePath = path.join(publicDir, 'parsed_pcr.json'); // /public/parsed_pcr.json
+    await fs.writeFile(savePath, JSON.stringify(parsedData, null, 2)); // Save properly!
+
 
     return NextResponse.json({ success: true, data: parsedData }, { status: 200 });
 

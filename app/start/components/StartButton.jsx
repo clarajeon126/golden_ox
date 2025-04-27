@@ -1,26 +1,37 @@
-// /app/start/components/StartButton.jsx
-
 "use client";
 
 import { useRouter } from "next/navigation";
-import { initSimulation } from "../../simulation/helpers/initGPT";
 import { useSimulation } from "../../simulation/context/SimulationContext";
 import styles from "../../simulation/styles/StartButton.module.css";
+
 
 export default function StartButton() {
   const router = useRouter();
   const { setPath, setCurrentPrompt, setHint, setAttempts } = useSimulation();
 
   const handleStart = async () => {
-    setCurrentPrompt("You are dispatched to a residential home for an 80-year-old woman complaining of chest pain and shortness of breath.\n  The scene appears safe and there are no visible hazards.\n  The patient is sitting on a couch, appearing pale and visibly distressed.\n  What is the first thing you should do?");
-    setHint("");
+    try {
+      const res = await fetch("../../../parsed_pcr.json", { cache: "no-store" });
+      if (!res.ok) {
+        throw new Error("Failed to load parsed_pcr.json");
+      }
+      const parsedPCR = await res.json();
+      if (parsedPCR.initial_prompt) {
+        setCurrentPrompt(parsedPCR.initial_prompt);
+        console.log(parsedPCR.initial_prompt);
+      }
+    } catch (error) {
+      console.error("[StartPage] Failed to fetch parsed_pcr.json:", error);
+    }
     
+
+    setHint("");
     setPath({
       outer_id: 0,
-      completed_inner_set: []});
+      completed_inner_set: [],
+    });
 
     router.push("/simulation"); // 🚀 Move to Simulation Page!
-
   };
 
   return (
