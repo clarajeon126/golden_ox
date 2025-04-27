@@ -1,28 +1,31 @@
-// /app/simulation/context/SimulationContext.js
-
 "use client";
 
 import { createContext, useContext, useState } from "react";
 
-const SimulationContext = createContext();
+export const SimulationContext = createContext();
 
 export function SimulationProvider({ children }) {
-  const [path, setPath] = useState(null);
-  const [currentPrompt, setCurrentPrompt] = useState("");
-  const [hint, setHint] = useState("");
-  const [attempts, setAttempts] = useState(0);
+  const [path, setPath] = useState(null); // path = { outer_id, inner_id, steps }
+  const [currentPrompt, setCurrentPrompt] = useState(""); // what user sees
+  const [attempts, setAttempts] = useState(0); // how many wrong tries
+  const [hint, setHint] = useState(""); // hint to display if wrong
+  const [initialMessages, setInitialMessages] = useState([]); // 🆕 messages list to send to GPT
 
   return (
-    <SimulationContext.Provider value={{
-      path,
-      setPath,
-      currentPrompt,
-      setCurrentPrompt,
-      hint,
-      setHint,
-      attempts,
-      setAttempts,
-    }}>
+    <SimulationContext.Provider
+      value={{
+        path,
+        setPath,
+        currentPrompt,
+        setCurrentPrompt,
+        attempts,
+        setAttempts,
+        hint,
+        setHint,
+        initialMessages,
+        setInitialMessages, // 🆕 expose setter too
+      }}
+    >
       {children}
     </SimulationContext.Provider>
   );
